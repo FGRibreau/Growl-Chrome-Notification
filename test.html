@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Google Chrome Growl Notification</title>
+</head>
+
+<body>
+<pre>
+	$node node/node.js
+</pre>
+<button id="ok">Envoyer une notification</button>
+<script type="text/javascript" charset="utf-8" src="extensions/page.js"></script>
+
+<script type="text/javascript" charset="utf-8">
+(function(){
+	var x = 10, y = 0;
+
+	document.getElementById('ok').addEventListener('click', function(){
+
+		if (window.webkitNotifications.checkPermission() == 1) {
+			window.webkitNotifications.requestPermission();
+			return;
+		}
+
+		var notif = window.webkitNotifications.createNotification('','Titre n°'+(x++),'Hello world n°'+(y++));
+		notif.show();
+	});
+})();
+</script>
+</body>
+</html>

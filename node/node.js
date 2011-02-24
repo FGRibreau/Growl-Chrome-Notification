@@ -1,12 +1,38 @@
-var util   = require('util'),
-    exec  = require('child_process').exec,
-    child;
+var util   = require('util')
+,   exec  = require('child_process').exec
+,   ws = require('./lib/websocket/lib/ws/server')
+,    child;
 
-child = exec('growlnotify -m "Hello world"',
-  function (error, stdout, stderr) {
-    console.log('stdout: ' + stdout);
-    console.log('stderr: ' + stderr);
-    if (error !== null) {
-      console.log('exec error: ' + error);
-    }
+
+var server = ws.createServer({debug: false});
+
+server.addListener("listening", function(){
+  console.log("Listening for connections.");
 });
+
+// Handle WebSocket Requests
+server.addListener("connection", function(conn){
+  conn.send("Connection: "+conn.id);
+
+  conn.addListener("message", function(cmd){
+    var cmd = JSON.parse(cmd);
+    
+    conn.broadcast("<"+conn.id+"> "+ cmd.body);
+    
+    console.log("<"+conn.id+"> "+ cmd.body);
+    child = exec('growlnotify -m "'+cmd.body+'" -t "'+cmd.title+'"',
+        function (error, stdout, stderr) {
+    });
+    
+  });
+});
+
+server.addListener("error", function(){
+  console.log(Array.prototype.join.call(arguments, ", "));
+});
+
+server.addListener("disconnected", function(conn){
+  server.broadcast("<"+conn.id+"> disconnected");
+});
+
+server.listen(8000);
