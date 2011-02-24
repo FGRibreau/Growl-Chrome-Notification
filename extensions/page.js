@@ -21,6 +21,7 @@ if (window.webkitNotifications) {
   }
   , onOpen: function(){
   	this.opened = true;
+  	console && console.log && console.log('[CONNEXION OK]');
   	this.sendNotify();
   }
   , onMessage: function(evt){
@@ -28,8 +29,10 @@ if (window.webkitNotifications) {
   }
   , onClose: function(){
   	if(!this.opened){
-  		alert('Le script NodeJS n\'est pas accessible');
+  		window.webkitNotifications.__pageTest && alert('Le script NodeJS n\'est pas accessible');
   	}
+  	
+  	console && console.log && console.log('[CONNEXION FERMEE]');
   	this.opened = false;
 
   }
@@ -46,32 +49,52 @@ if (window.webkitNotifications) {
   	var i = this.queue.length;
 
   	while(i--){
-  		console.log('[ENVOI] '+ this.queue[i].body);
+  		console && console.log && console.log('[ENVOI] '+ this.queue[i].body);
   		this.ws.send(JSON.stringify(this.queue[i])); 
   	}
 
   	this.queue = [];
   }
   };
-
+  
+  GrowlNotifier.init();
+  
   //Surcharger createNotification
   //http://www.chromium.org/developers/design-documents/desktop-notifications/api-specification
   window.webkitNotifications.originalCreateNotification = window.webkitNotifications.createNotification;
 
-  window.webkitNotifications.createNotification = webkitNotifications.createNotification = function (iconUrl, title, body) {
+  window.webkitNotifications.createNotification = function (iconUrl, title, body) {
       var n = window.webkitNotifications.originalCreateNotification(iconUrl, title, body);
+      
+      if(!GrowlNotifier.opened){
+        return n;
+      }
+      
       n.show = function(){
         GrowlNotifier.notify(iconUrl, title, body);
       };
-      
-      GrowlNotifier.notify(iconUrl, title, body);
-      console.debug(n);
-      
-      
       return n;
   };
   
-  GrowlNotifier.init();
+  window.webkitNotifications.originalCreateHTMLNotification = window.webkitNotifications.createHTMLNotification;
+  
+  //Fallback
+  //TODO: Tenter une requête AJAX pour récupérer le contenu (s'il est sur le même domain)
+  window.webkitNotifications.createHTMLNotification = function(url){
+    if(!GrowlNotifier.opened){
+      return window.webkitNotifications.originalCreateHTMLNotification(url);
+    }
+    
+    var linkIcon = document.querySelectorAll('link[rel*=icon]');
+    
+    if(linkIcon.length){
+      linkIcon = linkIcon[0].getAttribute('href');
+    }
+    return window.webkitNotifications.createNotification(linkIcon || '', document.querySelector('title').text, '');
+  };
+  
+  window.webkitNotifications.__overrided = true;
+  
 })();
 
 }

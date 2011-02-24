@@ -7,26 +7,40 @@
 
 <body>
 <pre>
-	$node node/node.js
+$node node/server.js
 </pre>
-<button id="ok">Envoyer une notification</button>
-<script type="text/javascript" charset="utf-8" src="extensions/page.js"></script>
-
+<button id="sendNotif">Envoyer une notification</button>
+<pre>
+window.webkitNotifications.createNotification('','Titre','Hello world').show();
+</pre>
 <script type="text/javascript" charset="utf-8">
-(function(){
+window.onload = (function(){
+	
+	//Pour le page.js
+	window.webkitNotifications.__pageTest = true;
+	
+	//Ne charger "page.js" uniquement si le plugins n'est pas présent
+	if(!window.webkitNotifications.__overrided){
+		var s = document.createElement("script");
+		s.src = "extensions/page.js";
+		s.type = "text/javascript";
+		document.getElementsByTagName("head")[0].appendChild(s);
+	}
+	
 	var x = 10, y = 0;
 
-	document.getElementById('ok').addEventListener('click', function(){
+	document.getElementById('sendNotif').addEventListener('click', function(){
 
 		if (window.webkitNotifications.checkPermission() == 1) {
 			window.webkitNotifications.requestPermission();
 			return;
 		}
 
-		var notif = window.webkitNotifications.createNotification('','Titre n°'+(x++),'Hello world n°'+(y++));
-		notif.show();
+		window.webkitNotifications.createNotification('','Titre','Hello world').show();
 	});
-})();
+
+});
+
 </script>
 </body>
 </html>

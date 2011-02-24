@@ -16,10 +16,8 @@ server.addListener("connection", function(conn){
 
   conn.addListener("message", function(cmd){
     var cmd = JSON.parse(cmd);
-    
-    conn.broadcast("<"+conn.id+"> "+ cmd.body);
-    
-    console.log("<"+conn.id+"> "+ cmd.body);
+
+    console.log("<"+conn.id+"> "+ cmd.title + ' $$ '+ cmd.body);
     child = exec('growlnotify -m "'+cmd.body+'" -t "'+cmd.title+'"',
         function (error, stdout, stderr) {
     });
