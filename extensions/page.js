@@ -12,6 +12,7 @@ if (window.webkitNotifications) {
   		func.apply(ctx, arguments);
   	};
   }
+  
   , init: function(){
   	this.ws = new WebSocket("ws://127.0.0.1:8000");
 
@@ -19,14 +20,20 @@ if (window.webkitNotifications) {
   	this.ws.onmessage = this.proxy(this.onMessage);
   	this.ws.onclose = this.proxy(this.onClose);
   }
+  
+  //Websocket::onopen
   , onOpen: function(){
   	this.opened = true;
   	console && console.log && console.log('[CONNEXION OK]');
   	this.sendNotify();
   }
+  
+  //Websocket::onmessage
   , onMessage: function(evt){
   	//console.debug(evt.data);
   }
+  
+  //Websocket::onclose
   , onClose: function(){
   	if(!this.opened){
   		window.webkitNotifications.__pageTest && alert('Le script NodeJS n\'est pas accessible');
@@ -36,6 +43,8 @@ if (window.webkitNotifications) {
   	this.opened = false;
 
   }
+  
+  //Appel depuis l'API
   , notify: function(icon, title, body){
   	this.queue.push({icon:icon, title:title, body:body});
 
@@ -45,6 +54,8 @@ if (window.webkitNotifications) {
 
   	this.sendNotify();
   }
+  
+  //Envoi les notifications
   , sendNotify: function(){
   	var i = this.queue.length;
 
@@ -61,10 +72,12 @@ if (window.webkitNotifications) {
   
   //Surcharger createNotification
   //http://www.chromium.org/developers/design-documents/desktop-notifications/api-specification
-  window.webkitNotifications.originalCreateNotification = window.webkitNotifications.createNotification;
-
+  var ctxWebkitNotif = window.webkitNotifications;
+  var oldCreateNotification =  ctxWebkitNotif.createNotification;
+  var oldCreateNotificationHTML = ctxWebkitNotif.createHTMLNotification;
+  
   window.webkitNotifications.createNotification = function (iconUrl, title, body) {
-      var n = window.webkitNotifications.originalCreateNotification(iconUrl, title, body);
+      var n = oldCreateNotification.call(ctxWebkitNotif, iconUrl, title, body);
       
       if(!GrowlNotifier.opened){
         return n;
@@ -76,13 +89,13 @@ if (window.webkitNotifications) {
       return n;
   };
   
-  window.webkitNotifications.originalCreateHTMLNotification = window.webkitNotifications.createHTMLNotification;
+  
   
   //Fallback
   //TODO: Tenter une requête AJAX pour récupérer le contenu (s'il est sur le même domain)
   window.webkitNotifications.createHTMLNotification = function(url){
     if(!GrowlNotifier.opened){
-      return window.webkitNotifications.originalCreateHTMLNotification(url);
+      return oldCreateNotificationHTML.call(ctxWebkitNotif, url);
     }
     
     var linkIcon = document.querySelectorAll('link[rel*=icon]');
