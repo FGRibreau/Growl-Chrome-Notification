@@ -12,8 +12,6 @@
 	"256": "256.png"
   },
 
-  /*"background_page": "background.html",*/
-
   "permissions": [
     "notifications"
   ],
