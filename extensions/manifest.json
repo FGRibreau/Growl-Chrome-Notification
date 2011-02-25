@@ -1,16 +1,18 @@
 {
   "update_url":"http://clients2.google.com/service/update2/crx",
-  "name": "Chrome Growl Extension for Mac",
-  "version": "1.0",
-  "description": "Route Chrome's desktop notifications to Growl for Mac.",
+  "name": "[POC] Google Chrome Growl Extension for Mac",
+  "version": "0.1",
+  "description": "Route Chrome's desktop notifications to Growl (via a local nodejs server) for Mac.",
 
   "icons": {
-	"16": "gfw16.png",
-	"48": "gfw48.png",
-	"128": "gfw128.png"
+	"16": "16.png",
+	"31": "32.png",
+	"48": "48.png",
+	"128": "128.png",
+	"256": "256.png"
   },
 
-  "background_page": "background.html",
+  /*"background_page": "background.html",*/
 
   "permissions": [
     "notifications"
