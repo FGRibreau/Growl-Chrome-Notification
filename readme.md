@@ -20,3 +20,6 @@ Pas de support des notifications HTML (besoin du cross-domain), donc fallback su
 ### Sources ###
 http://www.chromium.org/developers/design-documents/desktop-notifications/api-specification
 https://chrome.google.com/extensions/detail/efihdfpglnibppjnmnpbmdglmlljgcbk?hl=en
+
+### Donate
+[Donate Bitcoins](https://coinbase.com/checkouts/fc3041b9d8116e0b98e7d243c4727a30)
