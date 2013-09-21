@@ -1,4 +1,4 @@
-# Growl Notification pour Google Chrome (proof of concept) #
+# Growl Notification pour Google Chrome (proof of concept) [![Gittip](http://badgr.co/gittip/fgribreau.png)](https://www.gittip.com/fgribreau/)
 
 ### Objectif ###
 Utiliser Growl pour les notifications.
